@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime
+pids/
+*.pid
+*.seed
+
+# Uploads (temp)
+uploads/
+
+# OS
+.DS_Store
+Thumbs.db
