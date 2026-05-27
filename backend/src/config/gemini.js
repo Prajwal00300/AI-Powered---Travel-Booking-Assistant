@@ -17,4 +17,4 @@ const getGeminiClient = () => {
   return geminiClient;
 };
 
-module.exports = { getGeminiClient };
+module.exports = { getGeminiClient };  
