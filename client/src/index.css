@@ -10,7 +10,7 @@ body {
   color: #333;
 }
 
-/* Auth Pages */
+/* ─── AUTH PAGES ─────────────────────────────── */
 .auth-container {
   min-height: 100vh;
   display: flex;
@@ -32,6 +32,7 @@ body {
   font-size: 22px;
 }
 
+/* ─── FORM ELEMENTS ──────────────────────────── */
 .form-group {
   margin-bottom: 16px;
 }
@@ -56,6 +57,7 @@ body {
   border-color: #555;
 }
 
+/* ─── BUTTONS ────────────────────────────────── */
 .btn {
   width: 100%;
   padding: 10px;
@@ -68,18 +70,58 @@ body {
   margin-top: 8px;
 }
 
-.btn:hover {
-  background: #111;
+.btn:hover { background: #111; }
+.btn:disabled { background: #999; cursor: not-allowed; }
+
+.btn-sm {
+  padding: 6px 14px;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
 }
 
-.btn:disabled {
-  background: #999;
-  cursor: not-allowed;
+.btn-sm:hover { background: #111; }
+
+.btn-danger {
+  padding: 6px 14px;
+  background: #c0392b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
 }
 
+.btn-danger:hover { background: #a93226; }
+
+.btn-outline {
+  padding: 8px 16px;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-outline:hover { background: #f5f5f5; }
+
+/* ─── MESSAGES ───────────────────────────────── */
 .error-msg {
   background: #fdecea;
   color: #c0392b;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.success-msg {
+  background: #eafaf1;
+  color: #1e8449;
   padding: 10px 12px;
   border-radius: 6px;
   font-size: 13px;
@@ -99,6 +141,285 @@ body {
   text-decoration: none;
 }
 
-.link-text a:hover {
-  text-decoration: underline;
+.link-text a:hover { text-decoration: underline; }
+
+/* ─── NAVBAR ─────────────────────────────────── */
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  padding: 14px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+.navbar-brand {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  text-decoration: none;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-user {
+  font-size: 13px;
+  color: #666;
+}
+
+/* ─── PAGE LAYOUT ────────────────────────────── */
+.page-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  font-size: 20px;
+}
+
+/* ─── UPLOAD PAGE ────────────────────────────── */
+.upload-box {
+  background: #fff;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 40px 32px;
+  text-align: center;
+}
+
+.upload-box input[type="file"] {
+  margin: 16px auto;
+  display: block;
+  font-size: 14px;
+}
+
+.upload-box p {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.upload-box .file-hint {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 8px;
+}
+
+.upload-btn {
+  margin-top: 20px;
+  padding: 10px 32px;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  width: auto;
+  display: inline-block;
+}
+
+.upload-btn:hover { background: #111; }
+.upload-btn:disabled { background: #999; cursor: not-allowed; }
+
+.upload-status {
+  margin-top: 20px;
+  padding: 12px;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #555;
+  text-align: left;
+}
+
+.upload-status .step {
+  padding: 4px 0;
+}
+
+.upload-status .step.active {
+  color: #2980b9;
+  font-weight: 600;
+}
+
+.upload-status .step.done {
+  color: #1e8449;
+}
+
+/* ─── DASHBOARD / TRIP LIST ──────────────────── */
+.trips-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.trip-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.trip-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+.trip-card-info h4 {
+  font-size: 15px;
+  margin-bottom: 6px;
+  word-break: break-all;
+}
+
+.trip-card-info p {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.trip-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.badge-completed  { background: #d5f5e3; color: #1e8449; }
+.badge-processing { background: #d6eaf8; color: #1a5276; }
+.badge-failed     { background: #fdecea; color: #c0392b; }
+.badge-pending    { background: #fef9e7; color: #9a7d0a; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-state p { margin-bottom: 16px; font-size: 15px; }
+
+/* ─── TRIP DETAIL PAGE ───────────────────────── */
+.detail-section {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.detail-section h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.data-item label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.data-item span {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.itinerary-content {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: #111;
+  font-weight: 600;
+}
+
+.markdown-body h1 { font-size: 20px; }
+.markdown-body h2 { font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+.markdown-body h3 { font-size: 16px; }
+
+.markdown-body p {
+  margin-bottom: 16px;
+}
+
+.markdown-body ul, .markdown-body ol {
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+
+.markdown-body li {
+  margin-bottom: 6px;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+  color: #000;
+}
+
+.doc-preview {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  object-fit: contain;
+}
+
+.raw-text {
+  font-size: 12px;
+  color: #666;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 12px;
+  max-height: 180px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #555;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.back-link:hover { text-decoration: underline; }

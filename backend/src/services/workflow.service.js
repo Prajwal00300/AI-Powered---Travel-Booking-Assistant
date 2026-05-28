@@ -65,7 +65,7 @@ const WorkflowService = {
 
       // Step 4: AI Parsing
       console.log(`🤖 [Workflow] Step 4: Parsing OCR text with Gemini AI...`);
-      const structuredData = await AiService.parseOcrTextToJson(rawText);
+      const structuredData = await AiService.parseTravelData(rawText);
 
       // Step 5: Itinerary Generation
       console.log(`✈️  [Workflow] Step 5: Generating itinerary with Gemini AI...`);

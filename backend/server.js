@@ -2,7 +2,6 @@ require("dotenv").config();
 const app = require("./src/app");
 const connectDB = require("./src/config/db");
 const { configureCloudinary } = require("./src/config/cloudinary");
-const { getGeminiClient } = require("./src/config/gemini");
 
 const PORT = process.env.PORT || 3000;
 
@@ -24,9 +23,8 @@ const startServer = async () => {
     // 2. Configure Cloudinary
     configureCloudinary();
 
-    // 3. Initialize Gemini client (eagerly, to catch config errors on startup)
-    getGeminiClient();
-
+    // 3. (Gemini client is initialized in its own config file)
+    
     // 4. Start listening
     app.listen(PORT, () => {
       console.log(`

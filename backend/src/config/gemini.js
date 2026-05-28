@@ -1,20 +1,15 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-let geminiClient = null;
+if (!process.env.GEMINI_API_KEY) {
+  throw new Error("GEMINI_API_KEY is not defined in environment variables.");
+}
 
 /**
- * Returns a singleton instance of the Google Generative AI client.
- * Initializes on first call using the API key from environment variables.
+ * Official Google Generative AI client instance.
+ * Authenticated using GEMINI_API_KEY via new GoogleGenerativeAI(apiKey).
+ * This is the ONLY place Gemini authentication happens in the entire backend.
+ * No OAuth, no Bearer tokens, no axios — SDK handles everything internally.
  */
-const getGeminiClient = () => {
-  if (!geminiClient) {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY is not defined in environment variables.");
-    }
-    geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    console.log("✅ Gemini AI Client Initialized");
-  }
-  return geminiClient;
-};
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-module.exports = { getGeminiClient };  
+module.exports = genAI;
