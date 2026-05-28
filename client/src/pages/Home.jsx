@@ -20,8 +20,8 @@ const Home = () => {
           TravelAI Assistant
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <button 
-            className="btn-outline" 
+          <button
+            className="btn-outline"
             style={{ borderRadius: '30px', padding: '10px 32px', border: '2px solid #1e3c72', color: '#1e3c72', fontWeight: '600', width: 'auto' }}
             onClick={() => openAuth('login')}
           >
@@ -34,15 +34,15 @@ const Home = () => {
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 20px', textAlign: 'center' }}>
         <div className="animate-slide-up" style={{ maxWidth: '800px' }}>
           <h1 style={{ fontSize: '56px', fontWeight: '900', lineHeight: '1.1', marginBottom: '24px', color: '#111' }}>
-            Turn Any Document into a <br/>
+            Turn Any Document into a <br />
             <span className="gradient-text">Master Itinerary</span>
           </h1>
           <p style={{ fontSize: '20px', color: '#555', marginBottom: '40px', lineHeight: '1.6' }}>
             Upload PDFs or images of your bookings. Our AI extracts the details and crafts a perfectly organized, sharable travel plan in seconds.
           </p>
           <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-            <button 
-              className="btn" 
+            <button
+              className="btn"
               style={{ fontSize: '18px', padding: '16px 40px', borderRadius: '30px', background: '#111', width: 'auto' }}
               onClick={() => openAuth('register')}
             >
@@ -82,10 +82,10 @@ const Home = () => {
               "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=400&q=80",
               "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80"
             ].map((src, idx) => (
-              <img 
-                key={idx} 
-                src={src} 
-                alt="Destination" 
+              <img
+                key={idx}
+                src={src}
+                alt="Destination"
                 style={{ width: '300px', height: '220px', objectFit: 'cover', borderRadius: '16px', flexShrink: 0, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
               />
             ))}
@@ -96,14 +96,14 @@ const Home = () => {
       {/* Footer */}
       <footer style={{ background: '#111', color: '#fff', padding: '40px 20px', textAlign: 'center', marginTop: 'auto' }}>
         <p style={{ opacity: 0.8, fontSize: '15px' }}>&copy; 2026 TravelAI Assistant. All rights reserved.</p>
-        <p style={{ opacity: 0.5, fontSize: '13px', marginTop: '8px' }}>Crafted with AI & Modern Web Tech</p>
+        <p style={{ opacity: 0.5, fontSize: '13px', marginTop: '8px' }}>Crafted with  Modern Web Tech</p>
       </footer>
 
       {/* Auth Modal Portal */}
       {showAuthModal && (
-        <AuthModal 
-          initialMode={authMode} 
-          onClose={() => setShowAuthModal(false)} 
+        <AuthModal
+          initialMode={authMode}
+          onClose={() => setShowAuthModal(false)}
         />
       )}
     </div>
