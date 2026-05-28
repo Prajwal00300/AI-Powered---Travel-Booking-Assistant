@@ -62,4 +62,22 @@ const deleteTrip = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Trip deleted successfully."));
 });
 
-module.exports = { getAllTrips, getTripById, deleteTrip };
+/**
+ * @route   GET /api/trips/shared/:id
+ * @desc    Get a trip by ID for the public share view
+ * @access  Public
+ */
+const getSharedTripById = asyncHandler(async (req, res) => {
+  const trip = await TripService.getSharedTripById(req.params.id);
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, { trip }, "Shared trip fetched successfully."));
+});
+
+module.exports = {
+  getAllTrips,
+  getTripById,
+  deleteTrip,
+  getSharedTripById,
+};

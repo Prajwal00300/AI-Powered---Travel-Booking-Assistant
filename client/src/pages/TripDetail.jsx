@@ -55,6 +55,12 @@ const TripDetail = () => {
     }
   };
 
+  const handleCopyLink = async () => {
+    const link = `${window.location.origin}/shared/${id}`;
+    await navigator.clipboard.writeText(link);
+    alert(`Shareable link copied to clipboard!\n\n${link}`);
+  };
+
   if (loading) return <><Navbar /><div className="page-container"><p style={{ color: '#999' }}>Loading trip...</p></div></>;
   if (error) return <><Navbar /><div className="page-container"><div className="error-msg">{error}</div></div></>;
 
@@ -81,6 +87,13 @@ const TripDetail = () => {
               style={{ width: 'auto', padding: '6px 12px', fontSize: '12px' }}
             >
               📄 Export as PDF
+            </button>
+            <button 
+              className="btn-outline hide-on-print" 
+              onClick={handleCopyLink}
+              style={{ width: 'auto', padding: '6px 12px', fontSize: '12px' }}
+            >
+              🔗 Copy Share Link
             </button>
           </div>
           <button className="btn-danger" onClick={handleDelete} disabled={deleting}>

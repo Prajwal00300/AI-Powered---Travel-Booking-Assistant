@@ -81,6 +81,25 @@ const TripService = {
     }
     return trip;
   },
+
+  /**
+   * Retrieves a shared trip by ID (unprotected).
+   * @param {string} tripId - The MongoDB ObjectId of the trip.
+   * @returns {Object} The Trip document.
+   */
+  getSharedTripById: async (tripId) => {
+    const trip = await Trip.findOne({ _id: tripId })
+      // Exclude userId to protect privacy in public links
+      .select("-userId");
+    
+    if (!trip) {
+      throw new ApiError(
+        404,
+        "This trip does not exist."
+      );
+    }
+    return trip;
+  },
 };
 
 module.exports = TripService;

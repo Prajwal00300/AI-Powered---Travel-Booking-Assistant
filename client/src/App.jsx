@@ -7,6 +7,7 @@ import Register   from './pages/Register';
 import Dashboard  from './pages/Dashboard';
 import Upload     from './pages/Upload';
 import TripDetail from './pages/TripDetail';
+import SharedTrip from './pages/SharedTrip';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           {/* Public */}
           <Route path="/login"    element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/shared/:id" element={<SharedTrip />} />
 
           {/* Protected */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

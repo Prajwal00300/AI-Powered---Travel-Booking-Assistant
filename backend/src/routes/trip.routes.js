@@ -3,10 +3,15 @@ const {
   getAllTrips,
   getTripById,
   deleteTrip,
+  getSharedTripById,
 } = require("../controllers/trip.controller");
 const { protect } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
+
+// @route  GET  /api/trips/shared/:id
+// @desc   Publicly accessible route to view shared trips
+router.get("/shared/:id", getSharedTripById);
 
 // All routes below are JWT-protected
 router.use(protect);

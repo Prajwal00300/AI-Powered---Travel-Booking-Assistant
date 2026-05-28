@@ -24,9 +24,12 @@ export const uploadDocument = (formData) =>
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
-// Trips
-export const getAllTrips = ()   => API.get('/trips');
+// Trips API
+export const getAllTrips = () => API.get('/trips');
 export const getTripById = (id) => API.get(`/trips/${id}`);
-export const deleteTrip  = (id) => API.delete(`/trips/${id}`);
+export const deleteTrip = (id) => API.delete(`/trips/${id}`);
+
+// Shared Public API
+export const getSharedTrip = (id) => API.get(`/trips/shared/${id}`);
 
 export default API;
