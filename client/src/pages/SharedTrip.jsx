@@ -38,8 +38,8 @@ const SharedTrip = () => {
     fetch();
   }, [id]);
 
-  if (loading) return <div className="page-container"><p style={{ color: '#999', textAlign: 'center', marginTop: '50px' }}>Loading shared itinerary...</p></div>;
-  if (error) return <div className="page-container"><div className="error-msg" style={{ marginTop: '50px' }}>{error}</div></div>;
+  if (loading) return <div className="gradient-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}><div className="page-container" style={{ display: 'flex', justifyContent: 'center', marginTop: '100px' }}><div className="icon-spin" style={{ fontSize: '32px' }}>⏳</div></div></div>;
+  if (error) return <div className="gradient-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}><div className="page-container"><div className="error-msg" style={{ marginTop: '50px' }}>{error}</div></div></div>;
 
   const { originalFileName, documentType, cloudinaryUrl, processingStatus,
     extractedStructuredData: sd, generatedItinerary, uploadDate } = trip;
@@ -47,72 +47,79 @@ const SharedTrip = () => {
   const isImage = documentType === 'IMAGE';
 
   return (
-    <>
+    <div className="gradient-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Simple Public Header */}
-      <nav className="navbar hide-on-print" style={{ justifyContent: 'center' }}>
-        <h1 style={{ margin: 0, fontSize: '20px', letterSpacing: '-0.5px' }}>
-          ✈️ Travel Assistant <span style={{ fontSize: '12px', fontWeight: 'normal', color: '#666', marginLeft: '10px' }}>Shared View</span>
+      <nav className="glass-panel hide-on-print" style={{ padding: '16px 40px', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
+        <h1 className="gradient-text" style={{ margin: 0, fontSize: '20px', fontWeight: '800', letterSpacing: '-0.5px' }}>
+          TravelAI Assistant <span style={{ fontSize: '12px', fontWeight: '500', color: '#666', marginLeft: '10px' }}>Shared View</span>
         </h1>
       </nav>
 
-      <div className="page-container">
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+      <div className="page-container animate-fade-in" style={{ flex: 1, padding: '40px 20px', maxWidth: '1000px', width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '32px' }}>
           <button 
             className="btn-outline hide-on-print" 
             onClick={() => window.print()}
-            style={{ width: 'auto', padding: '6px 12px', fontSize: '12px' }}
+            style={{ width: 'auto', padding: '8px 16px', borderRadius: '20px', fontSize: '13px', border: 'none', background: 'rgba(255, 255, 255, 0.6)' }}
           >
-            📄 Export as PDF
+            📄 Export PDF
           </button>
         </div>
 
-        <div className="detail-section">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
+        {/* Header Section */}
+        <div className="detail-section" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px', padding: '40px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="hide-on-print" style={{ fontSize: '40px' }}>{documentType === 'flight' ? '✈️' : documentType === 'hotel' ? '🏨' : '📄'}</div>
             <div>
-              <h3 style={{ border: 'none', padding: 0, marginBottom: '6px' }}>📄 {originalFileName}</h3>
-              <p style={{ fontSize: '13px', color: '#888' }}>
-                Uploaded {formatDate(uploadDate)}
+              <h3 className="hide-on-print" style={{ border: 'none', padding: 0, marginBottom: '8px', fontSize: '28px', fontWeight: '800' }}>{originalFileName}</h3>
+              <p style={{ fontSize: '14px', color: '#666', fontWeight: '500' }}>
+                <span className="hide-on-print">UPLOADED </span>{formatDate(uploadDate).toUpperCase()}
               </p>
             </div>
-            {processingStatus !== 'completed' && (
-              <span className={`badge badge-${processingStatus}`}>{processingStatus}</span>
-            )}
           </div>
+          {processingStatus !== 'completed' && (
+            <span className={`badge badge-${processingStatus} hide-on-print`} style={{ fontSize: '13px', padding: '8px 16px' }}>
+              {processingStatus}
+            </span>
+          )}
         </div>
 
-        {cloudinaryUrl && (
-          <div className="detail-section hide-on-print">
-            <h3>Document Preview</h3>
-            {isImage ? (
-              <img src={cloudinaryUrl} alt="Travel document" className="doc-preview" />
-            ) : (
-              <a href={cloudinaryUrl} target="_blank" rel="noopener noreferrer">
-                <button className="btn-sm">📥 Open PDF in New Tab</button>
-              </a>
-            )}
-          </div>
-        )}
-
+        {/* Extracted Structured Data */}
         {sd && (
           <div className="detail-section">
             <h3>🤖 Extracted Travel Information</h3>
             <div className="data-grid">
-              <DataItem label="Passenger Name" value={sd.passengerName} />
-              <DataItem label="Flight / Train No" value={sd.flightNumber} />
-              <DataItem label="Airline / Carrier" value={sd.airline} />
-              <DataItem label="Departure City" value={sd.departureCity} />
-              <DataItem label="Arrival City" value={sd.arrivalCity} />
-              <DataItem label="Travel Date" value={sd.departureDate} />
-              <DataItem label="Hotel" value={sd.hotelName} />
-              <DataItem label="Check-In" value={sd.hotelCheckIn} />
-              <DataItem label="Check-Out" value={sd.hotelCheckOut} />
+              {sd.passengerName && <DataItem label="Passenger Name" value={sd.passengerName} />}
+              {sd.documentType && <DataItem label="Document Type" value={sd.documentType} />}
+              {sd.flightNumber && <DataItem label="Flight / Train No" value={sd.flightNumber} />}
+              {sd.airline && <DataItem label="Airline / Carrier" value={sd.airline} />}
+              {sd.departureCity && <DataItem label="Departure City" value={sd.departureCity} />}
+              {sd.arrivalCity && <DataItem label="Arrival City" value={sd.arrivalCity} />}
+              {sd.departureDate && <DataItem label="Travel Date" value={sd.departureDate} />}
+              {sd.returnDate && <DataItem label="Return Date" value={sd.returnDate} />}
+              {sd.seatNumber && <DataItem label="Seat" value={sd.seatNumber} />}
+              {sd.travelClass && <DataItem label="Class" value={sd.travelClass} />}
+              {sd.bookingReference && <DataItem label="Booking Ref / PNR" value={sd.bookingReference} />}
+              {sd.hotelName && <DataItem label="Hotel" value={sd.hotelName} />}
+              {sd.hotelCheckIn && <DataItem label="Check-In" value={sd.hotelCheckIn} />}
+              {sd.hotelCheckOut && <DataItem label="Check-Out" value={sd.hotelCheckOut} />}
+              {sd.totalAmount && <DataItem label="Total Amount" value={`${sd.totalAmount} ${sd.currency || ''}`} />}
             </div>
           </div>
         )}
 
+        {/* Document Preview */}
+        {cloudinaryUrl && isImage && (
+          <div className="detail-section">
+            <h3>🔍 Original Document</h3>
+            <img src={cloudinaryUrl} alt="Travel document" className="doc-preview" />
+          </div>
+        )}
+
+        {/* Generated Itinerary */}
         {generatedItinerary && (
           <div className="detail-section">
-            <h3>✈️ Travel Itinerary</h3>
+            <h3>✨ Travel Itinerary</h3>
             <div className="itinerary-content markdown-body">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {generatedItinerary}
@@ -121,14 +128,14 @@ const SharedTrip = () => {
           </div>
         )}
 
-        <div className="hide-on-print" style={{ textAlign: 'center', marginTop: '40px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-          <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>Want to generate your own travel itineraries?</h3>
-          <Link to="/register">
-            <button className="btn" style={{ width: 'auto', padding: '8px 20px' }}>Create Free Account</button>
+        <div className="hide-on-print glass-panel" style={{ textAlign: 'center', marginTop: '40px', padding: '40px', borderRadius: '16px' }}>
+          <h3 style={{ margin: '0 0 16px 0', fontSize: '20px', fontWeight: '800' }}>Want to generate your own travel itineraries?</h3>
+          <Link to="/">
+            <button className="btn" style={{ width: 'auto', padding: '12px 32px', borderRadius: '30px', background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', fontWeight: '600' }}>Create Free Account</button>
           </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

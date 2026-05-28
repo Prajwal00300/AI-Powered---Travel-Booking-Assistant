@@ -2,8 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
-import Login      from './pages/Login';
-import Register   from './pages/Register';
+import Home       from './pages/Home';
 import Dashboard  from './pages/Dashboard';
 import Upload     from './pages/Upload';
 import TripDetail from './pages/TripDetail';
@@ -15,8 +14,7 @@ const App = () => {
       <AuthProvider>
         <Routes>
           {/* Public */}
-          <Route path="/login"    element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/"         element={<Home />} />
           <Route path="/shared/:id" element={<SharedTrip />} />
 
           {/* Protected */}
@@ -25,7 +23,7 @@ const App = () => {
           <Route path="/trips/:id" element={<ProtectedRoute><TripDetail /></ProtectedRoute>} />
 
           {/* Default */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

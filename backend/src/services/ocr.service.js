@@ -31,6 +31,7 @@ const OcrService = {
 
       // Enable PDF-specific parsing if the document is a PDF
       if (mimeType === "application/pdf") {
+        formData.append("filetype", "PDF");
         formData.append("isCreateSearchablePdf", "false");
         formData.append("isSearchablePdfHideTextLayer", "false");
       }

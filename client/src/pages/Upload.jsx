@@ -22,9 +22,9 @@ const Upload = () => {
   const [error, setError]           = useState('');
   const [loading, setLoading]       = useState(false);
   const [currentStep, setCurrentStep] = useState(-1); // -1 = not started
+  const [isDragging, setIsDragging] = useState(false);
 
-  const handleFileChange = (e) => {
-    const selected = e.target.files[0];
+  const processSelectedFile = (selected) => {
     setError('');
     setCurrentStep(-1);
 
@@ -43,6 +43,34 @@ const Upload = () => {
     }
 
     setFile(selected);
+  };
+
+  const handleFileChange = (e) => {
+    processSelectedFile(e.target.files[0]);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!loading) setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    if (loading) return;
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processSelectedFile(e.dataTransfer.files[0]);
+    }
   };
 
   const handleUpload = async () => {
@@ -86,64 +114,95 @@ const Upload = () => {
   const allDone = currentStep === PIPELINE_STEPS.length;
 
   return (
-    <>
+    <div className="gradient-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      <div className="page-container" style={{ maxWidth: '600px' }}>
-        <div className="page-header">
-          <h2>Upload Travel Document</h2>
-        </div>
+      <div className="page-container animate-fade-in" style={{ flex: 1, maxWidth: '700px', width: '100%', padding: '40px 20px' }}>
+        
+        <div className="glass-panel" style={{ padding: '40px', borderRadius: '24px', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#111', marginBottom: '8px' }}>Upload Document</h2>
+          <p style={{ color: '#666', marginBottom: '32px' }}>Submit your flight ticket, hotel booking, or travel invoice.</p>
 
-        <div className="upload-box">
-          <p>Select a flight ticket, hotel booking, train ticket, or any travel invoice.</p>
-          <input
-            ref={fileRef}
-            type="file"
-            accept=".jpg,.jpeg,.png,.webp,.gif,.pdf"
-            onChange={handleFileChange}
-            disabled={loading}
-          />
-          {file && (
-            <p style={{ fontSize: '13px', color: '#333', marginTop: '8px' }}>
-              📄 <strong>{file.name}</strong> ({(file.size / 1024 / 1024).toFixed(2)} MB)
-            </p>
-          )}
-          <p className="file-hint">Supported: JPEG, PNG, WEBP, GIF, PDF — Max 10MB</p>
-        </div>
-
-        {error && <div className="error-msg" style={{ marginTop: '16px' }}>{error}</div>}
-
-        {/* Pipeline status */}
-        {currentStep >= 0 && (
-          <div className="upload-status">
-            {PIPELINE_STEPS.map((step, i) => {
-              let className = 'step';
-              if (i < currentStep || allDone) className += ' done';
-              else if (i === currentStep)     className += ' active';
-              return (
-                <div key={step.key} className={className}>
-                  {i < currentStep || allDone ? '✅' : i === currentStep ? '⏳' : '○'} {step.label}
-                </div>
-              );
-            })}
-            {allDone && (
-              <div style={{ marginTop: '10px', color: '#1e8449', fontWeight: 600 }}>
-                🎉 Done! Redirecting to your itinerary...
-              </div>
+          <div 
+            className={`upload-dropzone ${isDragging ? 'drag-active' : ''}`}
+            onClick={() => !loading && fileRef.current?.click()}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            style={{ 
+              borderColor: isDragging ? '#1e3c72' : undefined, 
+              background: isDragging ? 'rgba(255,255,255,0.9)' : undefined,
+              boxShadow: isDragging ? '0 8px 32px rgba(0, 0, 0, 0.05)' : undefined
+            }}
+          >
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp,.gif,.pdf"
+              onChange={handleFileChange}
+              disabled={loading}
+              style={{ display: 'none' }}
+            />
+            
+            {!file ? (
+              <>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>📤</div>
+                <p style={{ fontWeight: '600', color: '#333' }}>Click to browse files</p>
+                <p className="file-hint">Supported formats: JPEG, PNG, WEBP, GIF, PDF (Max 10MB)</p>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>📄</div>
+                <p style={{ fontWeight: '700', color: '#1e3c72', fontSize: '18px' }}>{file.name}</p>
+                <p style={{ color: '#666', fontSize: '14px', marginTop: '8px' }}>{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                {!loading && (
+                  <p style={{ color: '#1e3c72', fontSize: '13px', marginTop: '16px', fontWeight: '600', textDecoration: 'underline' }}>
+                    Click to change file
+                  </p>
+                )}
+              </>
             )}
           </div>
-        )}
 
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <button
-            className="upload-btn"
-            onClick={handleUpload}
-            disabled={loading || !file}
-          >
-            {loading ? 'Processing...' : 'Upload & Process'}
-          </button>
+          {error && <div className="error-msg" style={{ marginTop: '24px', textAlign: 'left' }}>{error}</div>}
+
+          {/* Pipeline status */}
+          {currentStep >= 0 && (
+            <div className="upload-status-card animate-slide-up">
+              <h4 style={{ marginBottom: '16px', color: '#111', fontWeight: '700' }}>AI Processing Pipeline</h4>
+              {PIPELINE_STEPS.map((step, i) => {
+                let className = 'status-step';
+                if (i < currentStep || allDone) className += ' done';
+                else if (i === currentStep)     className += ' active';
+                return (
+                  <div key={step.key} className={className}>
+                    {i < currentStep || allDone ? '✅' : i === currentStep ? (
+                      <span className="icon-spin">⏳</span>
+                    ) : '○'} 
+                    {step.label}
+                  </div>
+                );
+              })}
+              {allDone && (
+                <div style={{ marginTop: '20px', color: '#1e8449', fontWeight: 700, textAlign: 'center' }}>
+                  🎉 Done! Redirecting to your itinerary...
+                </div>
+              )}
+            </div>
+          )}
+
+          <div style={{ marginTop: '32px' }}>
+            <button
+              className="btn"
+              onClick={handleUpload}
+              disabled={loading || !file}
+              style={{ background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', borderRadius: '30px', padding: '14px 40px', fontSize: '16px', fontWeight: '600' }}
+            >
+              {loading ? 'Processing...' : 'Upload & Process with AI'}
+            </button>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
