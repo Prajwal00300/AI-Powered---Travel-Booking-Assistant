@@ -181,6 +181,7 @@ INSTRUCTIONS:
 - Include check-in/check-out times, flight times where available.
 - Add 2-3 practical travel tips per day.
 - Use clear markdown formatting (bold headings, bullet points).
+- Keep the itinerary concise and brief (maximum 150-200 words) to ensure fast generation.
 - STRICT RULE: Do NOT include any introductory or concluding conversational filler (e.g., "Have a fantastic trip!", "Here is your itinerary:", "Feel free to ask..."). Output ONLY the markdown itinerary itself.
 
 TRAVEL DATA:

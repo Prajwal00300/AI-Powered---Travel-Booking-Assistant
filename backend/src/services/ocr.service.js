@@ -27,7 +27,7 @@ const OcrService = {
       formData.append("isOverlayRequired", "false");
       formData.append("detectOrientation", "true");
       formData.append("scale", "true");
-      formData.append("OCREngine", "2"); // Engine 2 is more accurate for complex documents
+      formData.append("OCREngine", "1"); // Engine 1 is much faster than Engine 2
 
       // Enable PDF-specific parsing if the document is a PDF
       if (mimeType === "application/pdf") {

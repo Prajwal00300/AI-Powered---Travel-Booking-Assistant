@@ -6,13 +6,12 @@ import Navbar from '../components/Navbar';
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
 const MAX_SIZE_MB = 10;
 
-// Each step in the processing pipeline
 const PIPELINE_STEPS = [
   { key: 'uploading',   label: '📤 Uploading to Cloudinary...' },
   { key: 'ocr',         label: '🔍 Extracting text (OCR)...' },
   { key: 'parsing',     label: '🤖 Parsing with Gemini AI...' },
-  { key: 'itinerary',   label: '✈️  Generating itinerary...' },
-  { key: 'saving',      label: '💾 Saving to database...' },
+  { key: 'itinerary',   label: '✈️  Generating itinerary (this takes 10-15 seconds)...' },
+  { key: 'saving',      label: '💾 Finalizing...' },
 ];
 
 const Upload = () => {
@@ -74,8 +73,7 @@ const Upload = () => {
       setCurrentStep(PIPELINE_STEPS.length); // all done
 
       const tripId = res.data.data.trip._id;
-      // Short pause so user sees "done" state before redirect
-      setTimeout(() => navigate(`/trips/${tripId}`), 800);
+      navigate(`/trips/${tripId}`);
     } catch (err) {
       clearInterval(stepInterval);
       setCurrentStep(-1);

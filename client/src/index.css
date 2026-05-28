@@ -423,3 +423,13 @@ body {
 }
 
 .back-link:hover { text-decoration: underline; }
+
+/* ─── PRINT / EXPORT STYLES ──────────────────── */
+@media print {
+  body { background-color: #fff; }
+  .navbar, .hide-on-print, .btn-danger, .back-link { display: none !important; }
+  .page-container { padding: 0; max-width: 100%; margin: 0; }
+  .detail-section { border: none; box-shadow: none; padding: 0; margin-bottom: 24px; break-inside: avoid; }
+  .doc-preview { display: none; }
+  .markdown-body { color: #000; }
+}

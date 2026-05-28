@@ -71,9 +71,18 @@ const TripDetail = () => {
 
         {/* Back + Delete */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <span className="back-link" onClick={() => navigate('/dashboard')}>
-            ← Back to Dashboard
-          </span>
+          <div className="page-header" style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+            <span className="back-link" onClick={() => navigate('/dashboard')}>
+              ← Back to Dashboard
+            </span>
+            <button 
+              className="btn-outline hide-on-print" 
+              onClick={() => window.print()}
+              style={{ width: 'auto', padding: '6px 12px', fontSize: '12px' }}
+            >
+              📄 Export as PDF
+            </button>
+          </div>
           <button className="btn-danger" onClick={handleDelete} disabled={deleting}>
             {deleting ? 'Deleting...' : 'Delete Trip'}
           </button>
