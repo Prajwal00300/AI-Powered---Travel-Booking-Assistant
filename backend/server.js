@@ -55,4 +55,12 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-startServer();
+// If running on Vercel, export the app as a serverless function
+if (process.env.VERCEL) {
+  connectDB();
+  configureCloudinary();
+  module.exports = app;
+} else {
+  // Otherwise, start the standard Node.js server
+  startServer();
+}
