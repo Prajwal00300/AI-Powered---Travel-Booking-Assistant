@@ -7,20 +7,20 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'im
 const MAX_SIZE_MB = 10;
 
 const PIPELINE_STEPS = [
-  { key: 'uploading',   label: '📤 Uploading to Cloudinary...' },
-  { key: 'ocr',         label: '🔍 Extracting text (OCR)...' },
-  { key: 'parsing',     label: '🤖 Parsing with Gemini AI...' },
-  { key: 'itinerary',   label: '✈️  Generating itinerary (this takes 10-15 seconds)...' },
-  { key: 'saving',      label: '💾 Finalizing...' },
+  { key: 'uploading', label: '📤 Uploading to Cloudinary...' },
+  { key: 'ocr', label: '🔍 Extracting text (OCR)...' },
+  { key: 'parsing', label: '🤖 Parsing with Gemini AI...' },
+  { key: 'itinerary', label: '✈️  Generating itinerary...' },
+  { key: 'saving', label: '💾 Finalizing...' },
 ];
 
 const Upload = () => {
-  const navigate  = useNavigate();
-  const fileRef   = useRef(null);
+  const navigate = useNavigate();
+  const fileRef = useRef(null);
 
-  const [file, setFile]             = useState(null);
-  const [error, setError]           = useState('');
-  const [loading, setLoading]       = useState(false);
+  const [file, setFile] = useState(null);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(-1); // -1 = not started
   const [isDragging, setIsDragging] = useState(false);
 
@@ -65,7 +65,7 @@ const Upload = () => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
-    
+
     if (loading) return;
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -117,19 +117,19 @@ const Upload = () => {
     <div className="gradient-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
       <div className="page-container animate-fade-in" style={{ flex: 1, maxWidth: '700px', width: '100%', padding: '40px 20px' }}>
-        
+
         <div className="glass-panel" style={{ padding: '40px', borderRadius: '24px', textAlign: 'center' }}>
           <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#111', marginBottom: '8px' }}>Upload Document</h2>
           <p style={{ color: '#666', marginBottom: '32px' }}>Submit your flight ticket, hotel booking, or travel invoice.</p>
 
-          <div 
+          <div
             className={`upload-dropzone ${isDragging ? 'drag-active' : ''}`}
             onClick={() => !loading && fileRef.current?.click()}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            style={{ 
-              borderColor: isDragging ? '#1e3c72' : undefined, 
+            style={{
+              borderColor: isDragging ? '#1e3c72' : undefined,
               background: isDragging ? 'rgba(255,255,255,0.9)' : undefined,
               boxShadow: isDragging ? '0 8px 32px rgba(0, 0, 0, 0.05)' : undefined
             }}
@@ -142,7 +142,7 @@ const Upload = () => {
               disabled={loading}
               style={{ display: 'none' }}
             />
-            
+
             {!file ? (
               <>
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>📤</div>
@@ -172,12 +172,12 @@ const Upload = () => {
               {PIPELINE_STEPS.map((step, i) => {
                 let className = 'status-step';
                 if (i < currentStep || allDone) className += ' done';
-                else if (i === currentStep)     className += ' active';
+                else if (i === currentStep) className += ' active';
                 return (
                   <div key={step.key} className={className}>
                     {i < currentStep || allDone ? '✅' : i === currentStep ? (
                       <span className="icon-spin">⏳</span>
-                    ) : '○'} 
+                    ) : '○'}
                     {step.label}
                   </div>
                 );
