@@ -3,11 +3,7 @@ const UploadService = require("../services/upload.service");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiResponse = require("../utils/ApiResponse");
 
-/**
- * TripController
- * Handles HTTP for all trip-related CRUD operations.
- * Delegates data access to TripService and cleanup to UploadService.
- */
+
 
 /**
  * @route   GET /api/trips

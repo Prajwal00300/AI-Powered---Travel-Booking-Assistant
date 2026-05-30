@@ -1,9 +1,6 @@
 const cloudinary = require("cloudinary").v2;
 
-/**
- * Configures the Cloudinary SDK with credentials from environment variables.
- * Must be called once before any upload operations.
- */
+
 const configureCloudinary = () => {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

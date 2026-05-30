@@ -1,7 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// Redirects unauthenticated users to /login
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 

@@ -21,7 +21,7 @@ const Upload = () => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(-1); // -1 = not started
+  const [currentStep, setCurrentStep] = useState(-1);
   const [isDragging, setIsDragging] = useState(false);
 
   const processSelectedFile = (selected) => {
@@ -90,7 +90,7 @@ const Upload = () => {
       } else {
         clearInterval(stepInterval);
       }
-    }, 3500); // advance step every 3.5s
+    }, 3500);
 
     try {
       const formData = new FormData();

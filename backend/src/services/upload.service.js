@@ -2,15 +2,10 @@ const { cloudinary } = require("../config/cloudinary");
 const streamifier = require("streamifier");
 const ApiError = require("../utils/ApiError");
 
-/**
- * UploadService
- * Handles all Cloudinary file upload operations.
- * Uses a stream-based approach so we never write files to disk.
- */
+
 const UploadService = {
   /**
-   * Uploads a file buffer to Cloudinary using a stream.
-   * This avoids the need for temporary disk storage (better for serverless/cloud envs).
+   
    *
    * @param {Buffer} fileBuffer - The file buffer from Multer's memory storage.
    * @param {string} originalName - Original file name for reference.
@@ -52,8 +47,7 @@ const UploadService = {
   },
 
   /**
-   * Deletes a file from Cloudinary using its public ID.
-   * Called when a trip is deleted by the user.
+  
    *
    * @param {string} publicId - The Cloudinary public ID of the file.
    * @param {string} mimeType - Used to determine resource_type for deletion.
@@ -62,7 +56,6 @@ const UploadService = {
     try {
       await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
     } catch (error) {
-      // Log but don't throw — deletion failure shouldn't block user action
       console.error(`⚠️ Cloudinary deletion failed for ${publicId}: ${error.message}`);
     }
   },

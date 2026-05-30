@@ -5,16 +5,6 @@ const { configureCloudinary } = require("./src/config/cloudinary");
 
 const PORT = process.env.PORT || 3000;
 
-/**
- * Server startup sequence:
- * 1. Connect to MongoDB
- * 2. Configure Cloudinary
- * 3. Initialize Gemini client
- * 4. Start Express server
- *
- * The app only starts listening AFTER all critical services are connected.
- * This prevents the server from accepting requests before the DB is ready.
- */
 const startServer = async () => {
   try {
     // 1. Connect to MongoDB
@@ -24,17 +14,15 @@ const startServer = async () => {
     configureCloudinary();
 
     // 3. (Gemini client is initialized in its own config file)
-    
+
     // 4. Start listening
     app.listen(PORT, () => {
-      console.log(`
-🚀 ====================================
-   Travel Booking Assistant API
-   Status:  Running
+      console.log(`Travel Booking Assistant API
+        Status:  Running
    Port:    ${PORT}
    Env:     ${process.env.NODE_ENV || "development"}
    URL:     http://localhost:${PORT}/api/health
-====================================
+
       `);
     });
   } catch (error) {

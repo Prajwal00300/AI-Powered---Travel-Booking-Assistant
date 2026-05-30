@@ -2,11 +2,7 @@ const AuthService = require("../services/auth.service");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiResponse = require("../utils/ApiResponse");
 
-/**
- * AuthController
- * Lightweight HTTP layer — extracts input from req, delegates to AuthService, sends response.
- * Contains no business logic.
- */
+
 
 /**
  * @route   POST /api/auth/register

@@ -14,14 +14,11 @@ const { errorHandler, notFound } = require("./middlewares/error.middleware");
 
 const app = express();
 
-// ============================================================
-// SECURITY MIDDLEWARES
-// ============================================================
+
 
 // Set secure HTTP headers
 app.use(helmet());
 
-// Enable CORS for all origins (configure for specific origins in production)
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "*",
@@ -53,9 +50,7 @@ const authLimiter = rateLimit({
   },
 });
 
-// ============================================================
-// REQUEST PARSING MIDDLEWARES
-// ============================================================
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
@@ -64,9 +59,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// ============================================================
-// ROUTES
-// ============================================================
+
 
 // Health check endpoint (no auth needed)
 app.get("/api/health", (req, res) => {
@@ -82,9 +75,7 @@ app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/trips", tripRoutes);
 
-// ============================================================
-// ERROR HANDLING (must be last)
-// ============================================================
+
 app.use(notFound);
 app.use(errorHandler);
 

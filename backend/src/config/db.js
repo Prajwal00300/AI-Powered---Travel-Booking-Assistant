@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 
-/**
- * Connects to MongoDB using the URI from environment variables.
- * Exits the process if connection fails (fail-fast strategy for startup).
- */
+
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);

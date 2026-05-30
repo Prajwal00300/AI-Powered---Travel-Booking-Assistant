@@ -8,7 +8,7 @@ const AuthModal = ({ onClose, initialMode = 'login' }) => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -51,12 +51,12 @@ const AuthModal = ({ onClose, initialMode = 'login' }) => {
 
   return (
     <div className="modal-overlay animate-fade-in" onClick={onClose}>
-      <div 
-        className="modal-content animate-scale-up" 
+      <div
+        className="modal-content animate-scale-up"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <button className="modal-close" onClick={onClose}>&times;</button>
-        
+
         <h2 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 'bold' }}>
           {mode === 'login' ? 'Welcome Back' : 'Create an Account'}
         </h2>
@@ -71,37 +71,37 @@ const AuthModal = ({ onClose, initialMode = 'login' }) => {
           {mode === 'register' && (
             <div className="form-group">
               <label>Name</label>
-              <input 
-                type="text" 
-                name="name" 
-                value={formData.name} 
-                onChange={handleChange} 
-                required 
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
                 placeholder="John Doe"
               />
             </div>
           )}
-          
+
           <div className="form-group">
             <label>Email</label>
-            <input 
-              type="email" 
-              name="email" 
-              value={formData.email} 
-              onChange={handleChange} 
-              required 
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
               placeholder="you@example.com"
             />
           </div>
-          
+
           <div className="form-group">
             <label>Password</label>
-            <input 
-              type="password" 
-              name="password" 
-              value={formData.password} 
-              onChange={handleChange} 
-              required 
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
               placeholder="••••••••"
             />
           </div>

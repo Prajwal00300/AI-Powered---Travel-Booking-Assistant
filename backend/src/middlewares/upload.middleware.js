@@ -14,10 +14,7 @@ const ALLOWED_MIME_TYPES = [
 // Max file size: 10MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-/**
- * File filter function for Multer.
- * Rejects files with unsupported MIME types before they even hit the storage engine.
- */
+
 const fileFilter = (req, file, cb) => {
   if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
     cb(null, true); // Accept file
@@ -32,11 +29,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-/**
- * Multer instance using memoryStorage.
- * Files are stored in memory as Buffer objects (no temp disk files).
- * This integrates cleanly with the stream-based Cloudinary upload in UploadService.
- */
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -45,10 +38,7 @@ const upload = multer({
   fileFilter,
 });
 
-/**
- * Middleware to handle a single file upload under the field name "document".
- * Wraps multer errors into our standardized ApiError format.
- */
+
 const uploadSingle = (req, res, next) => {
   const multerUpload = upload.single("document");
 
