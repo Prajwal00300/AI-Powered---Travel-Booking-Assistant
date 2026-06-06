@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { uploadDocument } from '../api';
+import { uploadDocument, createManualTrip } from '../api';
 import Navbar from '../components/Navbar';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
@@ -18,35 +18,77 @@ const Upload = () => {
   const navigate = useNavigate();
   const fileRef = useRef(null);
 
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(-1);
   const [isDragging, setIsDragging] = useState(false);
 
-  const processSelectedFile = (selected) => {
+  const [activeTab, setActiveTab] = useState('upload');
+  const [manualCategory, setManualCategory] = useState('FLIGHT_TICKET');
+  const [manualData, setManualData] = useState({
+    arrivalCity: '',
+    departureCity: '',
+    departureDate: '',
+    returnDate: '',
+    airline: '',
+    flightNumber: '',
+    trainNumber: '',
+    hotelName: '',
+    hotelCheckIn: '',
+    hotelCheckOut: '',
+    preferences: ''
+  });
+
+  const handleManualSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const payload = { documentType: manualCategory, ...manualData };
+      const res = await createManualTrip(payload);
+      navigate(`/trips/${res.data.data.trip._id}`);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to generate itinerary.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const processSelectedFiles = (selectedFiles) => {
     setError('');
     setCurrentStep(-1);
 
-    if (!selected) { setFile(null); return; }
+    if (!selectedFiles || selectedFiles.length === 0) return;
 
-    if (!ALLOWED_TYPES.includes(selected.type)) {
-      setError('Unsupported file type. Please upload a JPEG, PNG, WEBP, GIF, or PDF.');
-      setFile(null);
+    const newFiles = Array.from(selectedFiles);
+    if (files.length + newFiles.length > 5) {
+      setError('You can only upload up to 5 documents at a time.');
       return;
     }
 
-    if (selected.size > MAX_SIZE_MB * 1024 * 1024) {
-      setError(`File too large. Maximum size is ${MAX_SIZE_MB}MB.`);
-      setFile(null);
-      return;
+    const validFiles = [];
+    for (let f of newFiles) {
+      if (!ALLOWED_TYPES.includes(f.type)) {
+        setError(`Unsupported file type: ${f.name}. Only JPEG, PNG, WEBP, GIF, or PDF.`);
+        return;
+      }
+      if (f.size > MAX_SIZE_MB * 1024 * 1024) {
+        setError(`File too large: ${f.name}. Maximum size is ${MAX_SIZE_MB}MB.`);
+        return;
+      }
+      validFiles.push(f);
     }
 
-    setFile(selected);
+    setFiles((prev) => [...prev, ...validFiles]);
+  };
+
+  const handleRemoveFile = (index) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleFileChange = (e) => {
-    processSelectedFile(e.target.files[0]);
+    processSelectedFiles(e.target.files);
   };
 
   const handleDragOver = (e) => {
@@ -69,12 +111,12 @@ const Upload = () => {
     if (loading) return;
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      processSelectedFile(e.dataTransfer.files[0]);
+      processSelectedFiles(e.dataTransfer.files);
     }
   };
 
   const handleUpload = async () => {
-    if (!file) { setError('Please select a file first.'); return; }
+    if (files.length === 0) { setError('Please select at least one file first.'); return; }
 
     setLoading(true);
     setError('');
@@ -94,7 +136,7 @@ const Upload = () => {
 
     try {
       const formData = new FormData();
-      formData.append('document', file);
+      files.forEach(f => formData.append('documents', f));
 
       const res = await uploadDocument(formData);
       clearInterval(stepInterval);
@@ -119,87 +161,198 @@ const Upload = () => {
       <div className="page-container animate-fade-in" style={{ flex: 1, maxWidth: '700px', width: '100%', padding: '40px 20px' }}>
 
         <div className="glass-panel" style={{ padding: '40px', borderRadius: '24px', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#111', marginBottom: '8px' }}>Upload Document</h2>
-          <p style={{ color: '#666', marginBottom: '32px' }}>Submit your flight ticket, hotel booking, or travel invoice.</p>
+          <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#111', marginBottom: '8px' }}>Create Itinerary</h2>
+          <p style={{ color: '#666', marginBottom: '32px' }}>Upload a document or manually enter details to generate your AI itinerary.</p>
 
-          <div
-            className={`upload-dropzone ${isDragging ? 'drag-active' : ''}`}
-            onClick={() => !loading && fileRef.current?.click()}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            style={{
-              borderColor: isDragging ? '#1e3c72' : undefined,
-              background: isDragging ? 'rgba(255,255,255,0.9)' : undefined,
-              boxShadow: isDragging ? '0 8px 32px rgba(0, 0, 0, 0.05)' : undefined
-            }}
-          >
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".jpg,.jpeg,.png,.webp,.gif,.pdf"
-              onChange={handleFileChange}
-              disabled={loading}
-              style={{ display: 'none' }}
-            />
-
-            {!file ? (
-              <>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>📤</div>
-                <p style={{ fontWeight: '600', color: '#333' }}>Click to browse files</p>
-                <p className="file-hint">Supported formats: JPEG, PNG, WEBP, GIF, PDF (Max 10MB)</p>
-              </>
-            ) : (
-              <>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>📄</div>
-                <p style={{ fontWeight: '700', color: '#1e3c72', fontSize: '18px' }}>{file.name}</p>
-                <p style={{ color: '#666', fontSize: '14px', marginTop: '8px' }}>{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                {!loading && (
-                  <p style={{ color: '#1e3c72', fontSize: '13px', marginTop: '16px', fontWeight: '600', textDecoration: 'underline' }}>
-                    Click to change file
-                  </p>
-                )}
-              </>
-            )}
-          </div>
-
-          {error && <div className="error-msg" style={{ marginTop: '24px', textAlign: 'left' }}>{error}</div>}
-
-          {/* Pipeline status */}
-          {currentStep >= 0 && (
-            <div className="upload-status-card animate-slide-up">
-              <h4 style={{ marginBottom: '16px', color: '#111', fontWeight: '700' }}>AI Processing Pipeline</h4>
-              {PIPELINE_STEPS.map((step, i) => {
-                let className = 'status-step';
-                if (i < currentStep || allDone) className += ' done';
-                else if (i === currentStep) className += ' active';
-                return (
-                  <div key={step.key} className={className}>
-                    {i < currentStep || allDone ? '✅' : i === currentStep ? (
-                      <span className="icon-spin">⏳</span>
-                    ) : '○'}
-                    {step.label}
-                  </div>
-                );
-              })}
-              {allDone && (
-                <div style={{ marginTop: '20px', color: '#1e8449', fontWeight: 700, textAlign: 'center' }}>
-                  🎉 Done! Redirecting to your itinerary...
-                </div>
-              )}
-            </div>
-          )}
-
-          <div style={{ marginTop: '32px' }}>
+          {/* Tab Selector */}
+          <div className="tab-selector">
             <button
-              className="btn"
-              onClick={handleUpload}
-              disabled={loading || !file}
-              style={{ background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', borderRadius: '30px', padding: '14px 40px', fontSize: '16px', fontWeight: '600' }}
+              className={`tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('upload'); setError(''); }}
             >
-              {loading ? 'Processing...' : 'Upload & Process with AI'}
+              📤 Smart Upload
+            </button>
+            <button
+              className={`tab-btn ${activeTab === 'manual' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('manual'); setError(''); }}
+            >
+              ✍️ Manual Entry
             </button>
           </div>
+
+          {activeTab === 'upload' && (
+            <>
+              <div
+                className={`upload-dropzone ${isDragging ? 'drag-active' : ''}`}
+                onClick={() => !loading && fileRef.current?.click()}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                style={{
+                  borderColor: isDragging ? '#1e3c72' : undefined,
+                  background: isDragging ? 'rgba(255,255,255,0.9)' : undefined,
+                  boxShadow: isDragging ? '0 8px 32px rgba(0, 0, 0, 0.05)' : undefined
+                }}
+              >
+                <input
+                  ref={fileRef}
+                  type="file"
+                  multiple
+                  accept=".jpg,.jpeg,.png,.webp,.gif,.pdf"
+                  onChange={handleFileChange}
+                  disabled={loading}
+                  style={{ display: 'none' }}
+                />
+
+                {files.length === 0 ? (
+                  <>
+                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>📤</div>
+                    <p style={{ fontWeight: '600', color: '#333' }}>Click to browse files or drag and drop</p>
+                    <p className="file-hint">Supported formats: JPEG, PNG, WEBP, GIF, PDF (Max 10MB each)</p>
+                  </>
+                ) : (
+                  <div style={{ textAlign: 'left' }}>
+                    <p style={{ fontWeight: '700', color: '#1e3c72', marginBottom: '16px', textAlign: 'center' }}>{files.length} Document(s) Selected</p>
+                    {files.map((f, index) => (
+                      <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.9)', padding: '12px 16px', borderRadius: '12px', marginBottom: '8px', border: '1px solid rgba(0,0,0,0.05)' }}>
+                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: '16px' }}>
+                          <span style={{ fontWeight: '600', color: '#333' }}>📄 {f.name}</span>
+                          <span style={{ color: '#888', fontSize: '12px', marginLeft: '8px' }}>{(f.size / 1024 / 1024).toFixed(2)} MB</span>
+                        </div>
+                        {!loading && (
+                          <button type="button" onClick={(e) => { e.stopPropagation(); handleRemoveFile(index); }} style={{ border: 'none', background: '#ffebee', color: '#c0392b', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
+                        )}
+                      </div>
+                    ))}
+                    {!loading && files.length < 5 && (
+                      <p style={{ color: '#1e3c72', fontSize: '14px', marginTop: '16px', fontWeight: '600', textDecoration: 'underline', textAlign: 'center' }}>
+                        + Add more documents
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {error && <div className="error-msg" style={{ marginTop: '24px', textAlign: 'left' }}>{error}</div>}
+
+              {/* Pipeline status */}
+              {currentStep >= 0 && (
+                <div className="upload-status-card animate-slide-up">
+                  <h4 style={{ marginBottom: '16px', color: '#111', fontWeight: '700' }}>AI Processing Pipeline</h4>
+                  {PIPELINE_STEPS.map((step, i) => {
+                    let className = 'status-step';
+                    if (i < currentStep || allDone) className += ' done';
+                    else if (i === currentStep) className += ' active';
+                    return (
+                      <div key={step.key} className={className}>
+                        {i < currentStep || allDone ? '✅' : i === currentStep ? (
+                          <span className="icon-spin">⏳</span>
+                        ) : '○'}
+                        {step.label}
+                      </div>
+                    );
+                  })}
+                  {allDone && (
+                    <div style={{ marginTop: '20px', color: '#1e8449', fontWeight: 700, textAlign: 'center' }}>
+                      Done! Redirecting to your itinerary...
+                    </div>
+                  )}
+                </div>
+              )}
+              <div style={{ marginTop: '32px' }}>
+                <button
+                  className="btn"
+                  onClick={handleUpload}
+                  disabled={loading || files.length === 0}
+                  style={{ background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', borderRadius: '30px', padding: '14px 40px', fontSize: '16px', fontWeight: '600' }}
+                >
+                  {loading ? 'Processing...' : 'Upload & Process with AI'}
+                </button>
+              </div>
+            </>
+          )}
+
+          {activeTab === 'manual' && (
+            <form onSubmit={handleManualSubmit} style={{ textAlign: 'left' }} className="animate-fade-in">
+              <div className="form-group" style={{ marginBottom: '24px' }}>
+                <label className="premium-label">Category</label>
+                <select
+                  className="premium-input"
+                  value={manualCategory}
+                  onChange={(e) => setManualCategory(e.target.value)}
+                  disabled={loading}
+                >
+                  <option value="FLIGHT_TICKET"> Flight Ticket</option>
+                  <option value="TRAIN_TICKET"> Train Ticket</option>
+                  <option value="HOTEL_BOOKING"> Hotel Booking</option>
+                  <option value="OTHER">General Travel Plan</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+                {manualCategory === 'FLIGHT_TICKET' && (
+                  <>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="premium-label">Airline (Optional)</label>
+                      <input type="text" className="premium-input" placeholder="e.g. Delta" value={manualData.airline} onChange={e => setManualData({ ...manualData, airline: e.target.value })} disabled={loading} />
+                    </div>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="premium-label">Flight Number (Optional)</label>
+                      <input type="text" className="premium-input" placeholder="e.g. DL123" value={manualData.flightNumber} onChange={e => setManualData({ ...manualData, flightNumber: e.target.value })} disabled={loading} />
+                    </div>
+                  </>
+                )}
+                {manualCategory === 'TRAIN_TICKET' && (
+                  <div className="form-group" style={{ gridColumn: 'span 2', marginBottom: 0 }}>
+                    <label className="premium-label">Train Number / Name (Optional)</label>
+                    <input type="text" className="premium-input" placeholder="e.g. Eurostar 9014" value={manualData.trainNumber} onChange={e => setManualData({ ...manualData, trainNumber: e.target.value })} disabled={loading} />
+                  </div>
+                )}
+                {manualCategory === 'HOTEL_BOOKING' && (
+                  <div className="form-group" style={{ gridColumn: 'span 2', marginBottom: 0 }}>
+                    <label className="premium-label">Hotel Name (Optional)</label>
+                    <input type="text" className="premium-input" placeholder="e.g. Hilton Tokyo" value={manualData.hotelName} onChange={e => setManualData({ ...manualData, hotelName: e.target.value })} disabled={loading} />
+                  </div>
+                )}
+
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="premium-label">{manualCategory === 'HOTEL_BOOKING' ? 'City' : 'Destination City'}</label>
+                  <input type="text" className="premium-input" placeholder="e.g. Tokyo" value={manualData.arrivalCity} onChange={e => setManualData({ ...manualData, arrivalCity: e.target.value })} disabled={loading} required />
+                </div>
+                {manualCategory !== 'HOTEL_BOOKING' && manualCategory !== 'OTHER' && (
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="premium-label">Departure City</label>
+                    <input type="text" className="premium-input" placeholder="e.g. New York" value={manualData.departureCity} onChange={e => setManualData({ ...manualData, departureCity: e.target.value })} disabled={loading} required />
+                  </div>
+                )}
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="premium-label">{manualCategory === 'HOTEL_BOOKING' ? 'Check-in Date' : 'Departure Date'}</label>
+                  <input type="date" className="premium-input" value={manualData.departureDate} onChange={e => setManualData({ ...manualData, departureDate: e.target.value })} disabled={loading} required />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="premium-label">{manualCategory === 'HOTEL_BOOKING' ? 'Check-out Date' : 'Return Date (Optional)'}</label>
+                  <input type="date" className="premium-input" value={manualData.returnDate} onChange={e => setManualData({ ...manualData, returnDate: e.target.value })} disabled={loading} />
+                </div>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '32px' }}>
+                <label className="premium-label">Travel Preferences (Optional)</label>
+                <input type="text" className="premium-input" placeholder="e.g. Relaxing, family friendly, highly adventurous" value={manualData.preferences} onChange={e => setManualData({ ...manualData, preferences: e.target.value })} disabled={loading} />
+              </div>
+
+              {error && <div className="error-msg" style={{ marginBottom: '24px', textAlign: 'left' }}>{error}</div>}
+
+              <button
+                type="submit"
+                className="btn"
+                disabled={loading || !manualData.arrivalCity || !manualData.departureDate}
+                style={{ width: '100%', background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', borderRadius: '30px', padding: '14px', fontSize: '16px', fontWeight: '600' }}
+              >
+                {loading ? 'Generating...' : 'Generate Itinerary'}
+              </button>
+            </form>
+          )}
+
         </div>
       </div>
     </div>

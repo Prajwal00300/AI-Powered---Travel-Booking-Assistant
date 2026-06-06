@@ -4,6 +4,7 @@ const {
   getTripById,
   deleteTrip,
   getSharedTripById,
+  createManualTrip,
 } = require("../controllers/trip.controller");
 const { protect } = require("../middlewares/auth.middleware");
 
@@ -18,6 +19,9 @@ router.use(protect);
 
 // @route  GET  /api/trips
 router.get("/", getAllTrips);
+
+// @route  POST /api/trips/manual
+router.post("/manual", createManualTrip);
 
 // @route  GET  /api/trips/:id
 router.get("/:id", getTripById);

@@ -64,4 +64,31 @@ const uploadSingle = (req, res, next) => {
   });
 };
 
-module.exports = { uploadSingle };
+const uploadMultiple = (req, res, next) => {
+  const multerUpload = upload.array("documents", 5);
+
+  multerUpload(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return next(
+          new ApiError(413, `File too large. Maximum allowed size is 10MB per file.`)
+        );
+      }
+      if (err.code === "LIMIT_UNEXPECTED_FILE") {
+         return next(new ApiError(400, "Maximum of 5 documents allowed per upload."));
+      }
+      return next(new ApiError(400, `Upload error: ${err.message}`));
+    }
+    if (err) {
+      return next(err);
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return next(new ApiError(400, "No files uploaded. Please provide at least one document."));
+    }
+
+    next();
+  });
+};
+
+module.exports = { uploadSingle, uploadMultiple };

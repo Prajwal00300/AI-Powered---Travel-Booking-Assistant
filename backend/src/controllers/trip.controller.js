@@ -1,5 +1,6 @@
 const TripService = require("../services/trip.service");
 const UploadService = require("../services/upload.service");
+const WorkflowService = require("../services/workflow.service");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiResponse = require("../utils/ApiResponse");
 
@@ -59,6 +60,20 @@ const deleteTrip = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @route   POST /api/trips/manual
+ * @desc    Generate a trip itinerary from manual input data
+ * @access  Protected
+ */
+const createManualTrip = asyncHandler(async (req, res) => {
+  const manualData = req.body;
+  const trip = await WorkflowService.processManualEntry(manualData, req.user._id);
+
+  res.status(201).json(
+    new ApiResponse(201, { trip }, "Manual itinerary generated successfully.")
+  );
+});
+
+/**
  * @route   GET /api/trips/shared/:id
  * @desc    Get a trip by ID for the public share view
  * @access  Public
@@ -76,4 +91,5 @@ module.exports = {
   getTripById,
   deleteTrip,
   getSharedTripById,
+  createManualTrip,
 };

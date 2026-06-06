@@ -24,6 +24,9 @@ export const uploadDocument = (formData) =>
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
+// Manual Trip
+export const createManualTrip = (data) => API.post('/trips/manual', data);
+
 // Trips API
 export const getAllTrips = () => API.get('/trips');
 export const getTripById = (id) => API.get(`/trips/${id}`);

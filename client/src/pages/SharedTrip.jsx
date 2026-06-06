@@ -42,7 +42,7 @@ const SharedTrip = () => {
   if (error) return <div className="gradient-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}><div className="page-container"><div className="error-msg" style={{ marginTop: '50px' }}>{error}</div></div></div>;
 
   const { originalFileName, documentType, cloudinaryUrl, processingStatus,
-    extractedStructuredData: sd, generatedItinerary, uploadDate } = trip;
+    extractedStructuredData: sd, generatedItinerary, uploadDate, fileReferences } = trip;
 
   const isImage = documentType === 'IMAGE';
 
@@ -68,10 +68,11 @@ const SharedTrip = () => {
 
         {/* Header Section */}
         <div className="detail-section" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px', padding: '40px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div className="hide-on-print" style={{ fontSize: '40px' }}>{documentType === 'flight' ? '✈️' : documentType === 'hotel' ? '🏨' : '📄'}</div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <div>
-              <h3 className="hide-on-print" style={{ border: 'none', padding: 0, marginBottom: '8px', fontSize: '28px', fontWeight: '800' }}>{originalFileName}</h3>
+              <h3 className="hide-on-print" style={{ border: 'none', padding: 0, marginBottom: '8px', fontSize: '28px', fontWeight: '800' }}>
+                {documentType === 'MULTIPLE' ? `${fileReferences?.length || 0} Documents Merged` : originalFileName || "Trip Document"}
+              </h3>
               <p style={{ fontSize: '14px', color: '#666', fontWeight: '500' }}>
                 <span className="hide-on-print">UPLOADED </span>{formatDate(uploadDate).toUpperCase()}
               </p>
@@ -109,10 +110,29 @@ const SharedTrip = () => {
         )}
 
         {/* Document Preview */}
-        {cloudinaryUrl && isImage && (
+        {(fileReferences?.length > 0 || cloudinaryUrl) && (
           <div className="detail-section">
-            <h3>🔍 Original Document</h3>
-            <img src={cloudinaryUrl} alt="Travel document" className="doc-preview" />
+            <h3>🔍 Original Document{fileReferences?.length > 1 ? 's' : ''}</h3>
+            {fileReferences?.length > 0 ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+                {fileReferences.map((ref, idx) => (
+                  <div key={idx} style={{ background: 'rgba(255,255,255,0.5)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.05)' }}>
+                    <p style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ref.originalFileName}</p>
+                    {ref.documentType === 'PDF' ? (
+                       <a href={ref.cloudinaryUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '8px 16px', background: '#e74c3c', color: 'white', borderRadius: '8px', textDecoration: 'none', fontSize: '13px', fontWeight: 'bold' }}>View PDF</a>
+                    ) : (
+                      <img src={ref.cloudinaryUrl} alt={`Doc ${idx+1}`} style={{ width: '100%', height: '200px', objectFit: 'contain', borderRadius: '8px', background: '#f5f5f5' }} />
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              documentType === 'PDF' ? (
+                 <a href={cloudinaryUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '12px 24px', background: '#e74c3c', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' }}>View Full PDF</a>
+              ) : isImage ? (
+                 <img src={cloudinaryUrl} alt="Travel document" className="doc-preview" />
+              ) : null
+            )}
           </div>
         )}
 

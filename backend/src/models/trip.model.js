@@ -10,22 +10,30 @@ const tripSchema = new mongoose.Schema(
     },
     originalFileName: {
       type: String,
-      required: [true, "Original file name is required"],
       trim: true,
+      default: null,
     },
     cloudinaryUrl: {
       type: String,
-      required: [true, "Cloudinary URL is required"],
+      default: null,
     },
     cloudinaryPublicId: {
       type: String,
-      required: [true, "Cloudinary public ID is required"],
+      default: null,
     },
     documentType: {
       type: String,
-      enum: ["PDF", "IMAGE"],
+      enum: ["PDF", "IMAGE", "MANUAL", "MULTIPLE"],
       required: [true, "Document type is required"],
     },
+    fileReferences: [
+      {
+        originalFileName: String,
+        cloudinaryUrl: String,
+        cloudinaryPublicId: String,
+        documentType: { type: String, enum: ["PDF", "IMAGE"] },
+      }
+    ],
     extractedRawText: {
       type: String,
       default: null,

@@ -56,26 +56,33 @@ const Dashboard = () => {
     <div className="gradient-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
       <div className="page-container animate-fade-in" style={{ flex: 1, padding: '40px 20px', maxWidth: '1000px', width: '100%' }}>
-        <div className="page-header" style={{ marginBottom: '40px' }}>
+        <div className="page-header" style={{ marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
           <div>
-            <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#111' }}>My Trips</h2>
-            <p style={{ color: '#666', marginTop: '8px' }}>Manage and share your AI-generated travel itineraries.</p>
+            <p style={{ fontSize: '14px', fontWeight: '700', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Dashboard</p>
+            <h2 style={{ fontSize: '36px', fontWeight: '800', color: '#111', letterSpacing: '-0.5px' }}>My Trips</h2>
           </div>
-          <Link to="/upload">
-            <button className="btn" style={{ padding: '12px 28px', borderRadius: '30px', background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', width: 'auto' }}>+ New Document</button>
+          <Link to="/upload" style={{ textDecoration: 'none' }}>
+            <button className="btn" style={{ padding: '14px 32px', borderRadius: '30px', background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', boxShadow: '0 8px 24px rgba(30, 60, 114, 0.2)', fontWeight: '700', fontSize: '15px', transition: 'all 0.3s ease' }}>
+              + Create Itinerary
+            </button>
           </Link>
         </div>
 
         {/* Stats Overview */}
         {!loading && trips.length > 0 && (
-          <div className="animate-slide-up" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '40px' }}>
-            <div className="glass-panel" style={{ padding: '24px', borderRadius: '16px' }}>
-              <div style={{ fontSize: '13px', color: '#666', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Documents</div>
-              <div style={{ fontSize: '40px', fontWeight: '800', color: '#111', marginTop: '8px', lineHeight: '1' }}>{trips.length}</div>
+          <div className="animate-slide-up" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px', marginBottom: '48px' }}>
+            <div className="glass-panel" style={{ padding: '32px', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '20px', border: '1px solid rgba(255,255,255,0.8)' }}>
+              <div>
+                <div style={{ fontSize: '12px', color: '#888', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Total Documents</div>
+                <div style={{ fontSize: '36px', fontWeight: '800', color: '#111', marginTop: '4px', lineHeight: '1' }}>{trips.length}</div>
+              </div>
             </div>
-            <div className="glass-panel" style={{ padding: '24px', borderRadius: '16px' }}>
-              <div style={{ fontSize: '13px', color: '#666', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Completed Itineraries</div>
-              <div style={{ fontSize: '40px', fontWeight: '800', color: '#1e8449', marginTop: '8px', lineHeight: '1' }}>{trips.filter(t => t.processingStatus === 'completed').length}</div>
+            
+            <div className="glass-panel" style={{ padding: '32px', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '20px', border: '1px solid rgba(255,255,255,0.8)' }}>
+              <div>
+                <div style={{ fontSize: '12px', color: '#888', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Completed Itineraries</div>
+                <div style={{ fontSize: '36px', fontWeight: '800', color: '#1e8449', marginTop: '4px', lineHeight: '1' }}>{trips.filter(t => t.processingStatus === 'completed').length}</div>
+              </div>
             </div>
           </div>
         )}
@@ -89,58 +96,65 @@ const Dashboard = () => {
             ))}
           </div>
         ) : trips.length === 0 ? (
-          <div className="empty-state animate-slide-up">
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>📂</div>
-            <h3 style={{ fontSize: '24px', color: '#111', marginBottom: '12px', fontWeight: '700' }}>No Trips Yet</h3>
-            <p>Upload your first flight ticket or hotel booking to see the magic.</p>
-            <Link to="/upload">
-              <button className="btn" style={{ background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', borderRadius: '30px', padding: '12px 32px', marginTop: '16px', width: 'auto' }}>Upload Document</button>
+          <div className="empty-state animate-slide-up" style={{ padding: '100px 20px', background: 'transparent', border: '2px dashed rgba(0,0,0,0.1)', borderRadius: '32px' }}>
+            <h3 style={{ fontSize: '28px', color: '#111', marginBottom: '12px', fontWeight: '800', letterSpacing: '-0.5px' }}>Your journey begins here</h3>
+            <p style={{ color: '#666', fontSize: '16px', marginBottom: '32px' }}>Upload your flight tickets, hotel bookings, or manually enter your plans to generate your first AI itinerary.</p>
+            <Link to="/upload" style={{ textDecoration: 'none' }}>
+              <button className="btn" style={{ background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', borderRadius: '30px', padding: '14px 40px', width: 'auto', fontWeight: '700', fontSize: '16px', boxShadow: '0 8px 24px rgba(30, 60, 114, 0.2)' }}>
+                Start Planning
+              </button>
             </Link>
           </div>
         ) : (
-          <div className="trips-grid animate-slide-up" style={{ animationDelay: '0.1s' }}>
-            {trips.map((trip) => (
-              <div
-                key={trip._id}
-                className="trip-card"
-                onClick={() => navigate(`/trips/${trip._id}`)}
-              >
-                <div className="trip-card-info">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '20px' }}>{trip.documentType === 'flight' ? '✈️' : trip.documentType === 'hotel' ? '🏨' : '📄'}</span>
-                    <h4 style={{ margin: 0 }}>{trip.originalFileName}</h4>
+          <div className="trips-grid animate-slide-up" style={{ animationDelay: '0.1s', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+            {trips.map((trip) => {
+              return (
+                <div
+                  key={trip._id}
+                  className="trip-card"
+                  onClick={() => navigate(`/trips/${trip._id}`)}
+                  style={{ padding: '24px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.8)', background: 'rgba(255, 255, 255, 0.85)', display: 'flex', flexDirection: 'column', height: '100%' }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', marginBottom: '20px' }}>
+                    <span className={statusBadge(trip.processingStatus)} style={{ padding: '6px 14px', borderRadius: '20px', fontSize: '11px', fontWeight: '800', letterSpacing: '0.5px' }}>
+                      {trip.processingStatus}
+                    </span>
                   </div>
-                  
-                  {trip.extractedStructuredData?.departureCity && (
-                    <p style={{ fontWeight: '600', color: '#333' }}>
-                      {trip.extractedStructuredData.departureCity}
-                      {trip.extractedStructuredData.arrivalCity &&
-                        ` ➔ ${trip.extractedStructuredData.arrivalCity}`}
-                    </p>
-                  )}
-                  {trip.extractedStructuredData?.passengerName && (
-                    <p>👤 {trip.extractedStructuredData.passengerName}</p>
-                  )}
-                  <p style={{ marginTop: '12px', fontSize: '12px', color: '#888', fontWeight: '600' }}>
-                    UPLOADED {formatDate(trip.uploadDate).toUpperCase()}
-                  </p>
-                </div>
 
-                <div className="trip-card-actions">
-                  <span className={statusBadge(trip.processingStatus)}>
-                    {trip.processingStatus}
-                  </span>
-                  <button
-                    className="btn-outline"
-                    style={{ borderRadius: '20px', padding: '6px 16px', fontSize: '12px', border: '1px solid rgba(255, 77, 77, 0.4)', color: '#d63031', marginTop: 'auto', background: 'rgba(255, 77, 77, 0.05)' }}
-                    onClick={(e) => handleDelete(e, trip._id)}
-                    disabled={deleting === trip._id}
-                  >
-                    {deleting === trip._id ? 'Deleting...' : 'Delete'}
-                  </button>
+                  <div className="trip-card-info" style={{ flex: 1 }}>
+                    <h4 style={{ fontSize: '18px', fontWeight: '800', color: '#111', marginBottom: '12px', lineHeight: '1.3' }}>
+                      {trip.documentType === 'MULTIPLE' ? `${trip.fileReferences?.length || 0} Documents Merged` : trip.originalFileName || 'Trip Document'}
+                    </h4>
+                    
+                    {trip.extractedStructuredData?.departureCity && (
+                      <p style={{ fontWeight: '600', color: '#444', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {trip.extractedStructuredData.departureCity}
+                        {trip.extractedStructuredData.arrivalCity && (
+                          <>
+                            <span style={{ color: '#aaa' }}>➔</span>
+                            {trip.extractedStructuredData.arrivalCity}
+                          </>
+                        )}
+                      </p>
+                    )}
+                  </div>
+
+                  <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <p style={{ fontSize: '11px', color: '#888', fontWeight: '700', letterSpacing: '0.5px' }}>
+                      {formatDate(trip.uploadDate).toUpperCase()}
+                    </p>
+                    <button
+                      className="btn-outline"
+                      style={{ borderRadius: '20px', padding: '6px 16px', fontSize: '12px', border: 'none', color: '#d63031', background: 'rgba(255, 77, 77, 0.1)', fontWeight: '700' }}
+                      onClick={(e) => handleDelete(e, trip._id)}
+                      disabled={deleting === trip._id}
+                    >
+                      {deleting === trip._id ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

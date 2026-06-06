@@ -11,10 +11,10 @@ const ApiResponse = require("../utils/ApiResponse");
  */
 const uploadDocument = asyncHandler(async (req, res) => {
 
-  const file = req.file;
+  const files = req.files;
   const userId = req.user._id;
 
-  const processedTrip = await WorkflowService.processDocument(file, userId);
+  const processedTrip = await WorkflowService.processDocuments(files, userId);
 
   res.status(201).json(
     new ApiResponse(
