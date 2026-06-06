@@ -59,6 +59,49 @@ const callGemini = async (prompt) => {
 };
 
 /**
+ * 
+ * @param {string} prompt
+ * @returns {string} Raw text response from Gemini
+ */
+const callGeminiFast = async (prompt) => {
+  // Prioritize lite models for extremely low latency
+  const models = ["gemini-3.1-flash-lite", "gemini-2.5-flash-lite", PRIMARY_MODEL, ...FALLBACK_MODELS];
+
+  for (const modelName of models) {
+    try {
+      console.log(`🤖 [Gemini Fast] Calling model: ${modelName}`);
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      const text = result.response.text();
+
+      console.log(`✅ [Gemini Fast] Response received from: ${modelName}`);
+      return text.trim();
+
+    } catch (err) {
+      const msg = err.message || "";
+      const isQuota = msg.includes("429") || msg.includes("quota") || msg.includes("Too Many Requests");
+      const is404 = msg.includes("404") || msg.includes("not found");
+      const isAuth = msg.includes("401") || msg.includes("403") || msg.includes("API_KEY_INVALID");
+
+      if (isAuth) {
+        throw new ApiError(401, "Gemini API key is invalid or expired.");
+      }
+
+      if (isQuota || is404) {
+        console.warn(`⚠️  [Gemini Fast] ${modelName} unavailable — trying next model...`);
+        continue;
+      }
+      
+      console.error(`❌ [Gemini Fast] Unexpected error on ${modelName}: ${msg}`);
+      throw err;
+    }
+  }
+
+  throw new ApiError(429, "All Gemini models are currently quota-limited.");
+};
+
+
+/**
  * @param {string} raw - Raw response text from Gemini
  * @returns {Object} Parsed JavaScript object
  */
@@ -124,7 +167,8 @@ ${rawText}
 JSON:`;
 
     try {
-      const responseText = await callGemini(prompt);
+      // Use the fast lite models for OCR extraction to slash latency
+      const responseText = await callGeminiFast(prompt);
       const structured = safeParseJson(responseText);
       return structured;
     } catch (err) {
@@ -156,7 +200,8 @@ ${JSON.stringify(structuredData, null, 2)}
 ITINERARY:`;
 
     try {
-      const itinerary = await callGemini(prompt);
+      // Use the ultra-fast lite models for generating the itinerary text
+      const itinerary = await callGeminiFast(prompt);
       if (!itinerary) {
         throw new ApiError(500, "Gemini returned an empty itinerary response.");
       }

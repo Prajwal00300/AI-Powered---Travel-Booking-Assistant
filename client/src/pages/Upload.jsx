@@ -125,6 +125,8 @@ const Upload = () => {
     // The real pipeline runs server-side; we animate steps for UX
     let step = 0;
     setCurrentStep(0);
+    // Pace the UI progression slightly slower (5 seconds per step)
+    // so it aligns better with the actual backend AI latency.
     const stepInterval = setInterval(() => {
       step += 1;
       if (step < PIPELINE_STEPS.length) {
@@ -132,7 +134,7 @@ const Upload = () => {
       } else {
         clearInterval(stepInterval);
       }
-    }, 3500);
+    }, 5000);
 
     try {
       const formData = new FormData();
