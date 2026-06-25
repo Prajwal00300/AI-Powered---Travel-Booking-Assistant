@@ -5,10 +5,10 @@ import Navbar from '../components/Navbar';
 
 const statusBadge = (status) => {
   const map = {
-    completed:  'badge badge-completed',
+    completed: 'badge badge-completed',
     processing: 'badge badge-processing',
-    failed:     'badge badge-failed',
-    pending:    'badge badge-pending',
+    failed: 'badge badge-failed',
+    pending: 'badge badge-pending',
   };
   return map[status] || 'badge badge-pending';
 };
@@ -20,9 +20,9 @@ const formatDate = (dateStr) =>
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [trips, setTrips]     = useState([]);
+  const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState('');
+  const [error, setError] = useState('');
   const [deleting, setDeleting] = useState(null); // tripId being deleted
 
   const fetchTrips = async () => {
@@ -77,7 +77,7 @@ const Dashboard = () => {
                 <div style={{ fontSize: '36px', fontWeight: '800', color: '#111', marginTop: '4px', lineHeight: '1' }}>{trips.length}</div>
               </div>
             </div>
-            
+
             <div className="glass-panel" style={{ padding: '32px', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '20px', border: '1px solid rgba(255,255,255,0.8)' }}>
               <div>
                 <div style={{ fontSize: '12px', color: '#888', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Completed Itineraries</div>
@@ -125,7 +125,7 @@ const Dashboard = () => {
                     <h4 style={{ fontSize: '18px', fontWeight: '800', color: '#111', marginBottom: '12px', lineHeight: '1.3' }}>
                       {trip.documentType === 'MULTIPLE' ? `${trip.fileReferences?.length || 0} Documents Merged` : trip.originalFileName || 'Trip Document'}
                     </h4>
-                    
+
                     {trip.extractedStructuredData?.departureCity && (
                       <p style={{ fontWeight: '600', color: '#444', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         {trip.extractedStructuredData.departureCity}
@@ -149,7 +149,7 @@ const Dashboard = () => {
                       onClick={(e) => handleDelete(e, trip._id)}
                       disabled={deleting === trip._id}
                     >
-                      {deleting === trip._id ? 'Deleting...' : 'Delete'}
+                      {deleting === trip._id ? 'Deleting....' : 'Delete'}
                     </button>
                   </div>
                 </div>
